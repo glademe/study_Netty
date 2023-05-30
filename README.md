@@ -148,4 +148,11 @@ encode()
 ```markdown
 1.写模式:新创建clear()获得外部的数据（文件，网络数据）
 2.读模式：filp()程序读取buffer中的数据，为了程序使用
+``` 
+
+## 2、ByteBuffer
+### 2.1、ByteBuffer是抽象类，他的主要实现类为：
+```markdown
+1、HeapByteBuffer
+2、MappedByteBuffer(DirectByteBuffer)
 ```

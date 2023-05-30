@@ -1,0 +1,22 @@
+######################################################################
+# Build Tools
+/build/
+target/
+
+######################################################################
+# IDE
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+# Others
+*.log
+*.xml.versionsBackup
+*.swp
+
+!*/build/*.java
+!*/build/*.html
+!*/build/*.xml
