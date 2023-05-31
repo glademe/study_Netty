@@ -125,8 +125,27 @@ public class NioTest_FileChannel {
     }
 }
 ```
-
-## 2、Buffer
+## 2、ByteBuffer
+### 2.1、ByteBuffer是抽象类，他的主要实现类为：
+```markdown
+1、HeapByteBuffer 堆 【JVM内的堆内存】
+2、MappedByteBuffer(DirectByteBuffer) 【OS内存】
+```
+- 获得方式
+```java
+ByteBuffer.allocate(10);
+encode()
+```
+- 核心结构
+```markdown
+ByteBuffer是一个类似数组的结构，整个结构包含三个主要的状态
+1.Capacity
+    buffer的容量，类似于数组的Size
+2.Position
+    buffer当前缓存的下标，在读取操作时记录读取了哪个位置，在写操作时记录写到了哪个位置，从0开始，每读取一次，下标+1
+3.Limit
+    读写限制，在读操作时，设置了你能读多少字节的数据，在写操作时，设置了你还能写多少字节的数据
+```
 ```markdown
 1、ByteBuffer
 2、CharBuffer
@@ -136,23 +155,10 @@ public class NioTest_FileChannel {
 6、ShortBuffer
 7、MappedByteBuffer
 ```
-- 获得方式
 
-
-```java
-ByteBuffer.allocate(10);
-encode()
-```
 - 模式
 
 ```markdown
 1.写模式:新创建clear()获得外部的数据（文件，网络数据）
-2.读模式：filp()程序读取buffer中的数据，为了程序使用
+2.读模式:filp()程序读取buffer中的数据，为了程序使用
 ``` 
-
-## 2、ByteBuffer
-### 2.1、ByteBuffer是抽象类，他的主要实现类为：
-```markdown
-1、HeapByteBuffer
-2、MappedByteBuffer(DirectByteBuffer)
-```
