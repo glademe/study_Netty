@@ -162,3 +162,21 @@ ByteBuffer是一个类似数组的结构，整个结构包含三个主要的状�
 1.写模式:新创建clear()获得外部的数据（文件，网络数据）
 2.读模式:filp()程序读取buffer中的数据，为了程序使用
 ``` 
+
+### 2.2、ByteBuffer核心API
+- buffer中写入数据
+
+```java
+1.channel的read方法
+2.buffer的put方法
+```
+
+- 从buffer中读取数据
+
+```markdown
+1.channel的write方法
+2.buffer的get方法//每调用一次，position会发生改变
+3.mark&reset方法，通过mark方法进行标记（position）,通过reset方法跳回标记，重新执行
+4.rewind方法，可以将position重置为0，用于赋值
+5.get(i)方法，获取特定position上的数据，但不会对position的位置产生影响
+```
