@@ -1,6 +1,7 @@
 # Netty学习笔记
 
 ## 1、Channel
+
 > 文件操作
 
 - FileChannel
@@ -20,7 +21,9 @@
 4、ServerSocket
 5、DatagramSocket
 ```
+
 ### 1.1.获取channel的方式
+
 > FileInputStream
 
 ```java
@@ -58,6 +61,7 @@ public class NioTest_FileInputStream {
     }
 }
 ```
+
 > RandomAccessFile
 
 ```java
@@ -98,7 +102,8 @@ public class NioTest_RandomAccessFile {
     }
 }
 ```
->FileChannel
+
+> FileChannel
 
 ```java
 public class NioTest_FileChannel {
@@ -125,27 +130,35 @@ public class NioTest_FileChannel {
     }
 }
 ```
+
 ## 2、ByteBuffer
+
 ### 2.1、ByteBuffer是抽象类，他的主要实现类为：
+
 ```markdown
 1、HeapByteBuffer 堆 【JVM内的堆内存】
 2、MappedByteBuffer(DirectByteBuffer) 【OS内存】
 ```
+
 - 获得方式
-```java
+
+```markdown
 ByteBuffer.allocate(10);
 encode()
 ```
+
 - 核心结构
+
 ```markdown
 ByteBuffer是一个类似数组的结构，整个结构包含三个主要的状态
 1.Capacity
-    buffer的容量，类似于数组的Size
+buffer的容量，类似于数组的Size
 2.Position
-    buffer当前缓存的下标，在读取操作时记录读取了哪个位置，在写操作时记录写到了哪个位置，从0开始，每读取一次，下标+1
+buffer当前缓存的下标，在读取操作时记录读取了哪个位置，在写操作时记录写到了哪个位置，从0开始，每读取一次，下标+1
 3.Limit
-    读写限制，在读操作时，设置了你能读多少字节的数据，在写操作时，设置了你还能写多少字节的数据
+读写限制，在读操作时，设置了你能读多少字节的数据，在写操作时，设置了你还能写多少字节的数据
 ```
+
 ```markdown
 1、ByteBuffer
 2、CharBuffer
@@ -164,9 +177,10 @@ ByteBuffer是一个类似数组的结构，整个结构包含三个主要的状�
 ``` 
 
 ### 2.2、ByteBuffer核心API
+
 - buffer中写入数据
 
-```java
+```markdown
 1.channel的read方法
 2.buffer的put方法
 ```
@@ -179,4 +193,147 @@ ByteBuffer是一个类似数组的结构，整个结构包含三个主要的状�
 3.mark&reset方法，通过mark方法进行标记（position）,通过reset方法跳回标记，重新执行
 4.rewind方法，可以将position重置为0，用于赋值
 5.get(i)方法，获取特定position上的数据，但不会对position的位置产生影响
+```
+
+### 2.3、ByteBuffer字符串操作
+
+- 2.3.1、字符串存储到Buffer中
+
+```markdown
+ByteBuffer buffer = ByteBuffer.allocate(10)
+buffer.put("Jorry",getBytes())
+
+buffer.flip()
+while(buffer.hasRemaing()){
+System.out.println(buffer.get())
+}
+
+buffer.clear()
+
+ByteBuffer buffer = Charset.forName("UTF-8").encode("Jorry");
+1.encode方法字段把字符串按照字符编码后，存储到ByteBuffer
+2.自动把ByteBuffer设置成读模式，且不能手工调用flip方法
+ByteBuffer buffer = StandardCharsets.UTF_8.encode("Jorry");
+ByteBuffer buffer = ByteBuffer.wrap("Jorry".getBytes(StandardCharsets.UTF_8));
+```
+
+- 2.3.2、Buffer中的数据转化为字符串
+
+```markdown
+ByteBuffer buffer = ByteBuffer.allocate(10);
+buffer.put("和".getBytes(StandardCharsets.UTF_8));
+buffer.flip();
+String name = StandardCharsets.UTF_8.decode(buffer).toString();
+System.out.println("name = " + name);
+```
+
+```java
+public class TestNio03 {
+
+    /**
+     * 用于测试 xxx
+     */
+    @Test
+    public void test01() {
+        ByteBuffer buffer = ByteBuffer.allocate(50);
+        buffer.put("Hi hezhenbin\n I love y".getBytes());
+        doLineSplit(buffer);
+        buffer.put("ou\n Do you like me? \n".getBytes());
+        doLineSplit(buffer);
+
+    }
+
+    /**
+     * 分割后放在新的Buffer中
+     *
+     * @param buffer
+     */
+    private static void doLineSplit(ByteBuffer buffer) {
+        buffer.flip();
+        for (int i = 0; i < buffer.limit(); i++) {
+            if (buffer.get(i) == '\n') {
+                int length = i + 1 -buffer.position();
+                ByteBuffer newByteBuffer = ByteBuffer.allocate(length);
+                for (int j = 0; j < length; j++) {
+                    newByteBuffer.put(buffer.get());
+                }
+
+                //截取工作完成
+                newByteBuffer.flip();
+                System.out.println(StandardCharsets.UTF_8.decode(newByteBuffer).toString());
+            }
+        }
+        buffer.compact();
+    }
+}
+
+```
+
+## 3、NIO的开发使用
+### 3.1、文件操作
+#### 3.1.1、读取文件内容
+```java
+public class NioTest_FileInputStream {
+    public static void main(String[] args) {
+
+        try {
+            //1.获取文件输入流
+            FileInputStream is = new FileInputStream("D:\\project\\study_Netty\\Nio_Bio\\src\\main\\resources\\data.txt");
+            //2.获取FileChannel
+            FileChannel channel = is.getChannel();
+            //3.创建缓冲区
+            ByteBuffer byteBuffer = ByteBuffer.allocate(10);
+            while (true) {
+                //4.将通道中的消息写入缓冲区
+                int read = channel.read(byteBuffer);
+                if (read == -1) {
+                    break;
+                }
+                //程序读取buffer中的数据，要将Buffer转换为读模式
+                byteBuffer.flip();
+                //循环读取缓冲区中的数据
+                while (byteBuffer.hasRemaining()) {
+                    byte b = byteBuffer.get();
+                    System.out.println("b = " + (char) b);
+                }
+                //设置写模式,可以进行后续数据的写入
+                byteBuffer.clear();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+}
+```
+### 3.1.2、写入文件
+```java
+public class TestNio04 {
+
+    /**
+     * 用于测试 文件写入操作
+     */
+    @Test
+    public void test01() throws IOException {
+        String data = "Jorry";
+        FileOutputStream os = new FileOutputStream("classpath:temp.txt");
+        FileChannel channel = os.getChannel();
+        ByteBuffer buffer = Charset.defaultCharset().encode(data);
+        channel.write(buffer);
+    }
+}
+
+```
+> Channel方式文件复制
+```java
+public class TestNio{
+    @Test
+    public void test03() throws IOException {
+        FileChannel from = new FileInputStream("D:\\project\\study_Netty\\Nio_Bio\\src\\main\\resources\\data.txt").getChannel();
+        FileChannel to = new FileOutputStream("D:\\project\\study_Netty\\Nio_Bio\\src\\main\\resources\\data2.txt").getChannel();
+        //传输数据上限 2G-1
+        from.transferTo(0, from.size(), to);
+    }
+}
 ```
