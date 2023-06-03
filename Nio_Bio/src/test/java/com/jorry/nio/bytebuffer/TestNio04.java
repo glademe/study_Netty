@@ -49,7 +49,7 @@ public class TestNio04 {
     }
 
     /**
-     * 用于测试 xxx
+     * 用于测试文件的复制
      */
     @Test
     public void test03() throws IOException {
