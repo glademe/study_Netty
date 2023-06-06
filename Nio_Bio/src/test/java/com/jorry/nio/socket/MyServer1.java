@@ -25,13 +25,16 @@ public class MyServer1 {
         while (true) {
             SocketChannel sc = ssc.accept();
             if (sc != null) {
+                sc.configureBlocking(false);
                 list.add(sc);
             }
             for (SocketChannel socketChannel : list) {
-                socketChannel.read(buffer);
-                buffer.flip();
-                System.out.println("Charset.defaultCharset().decode(buffer) = " + Charset.defaultCharset().decode(buffer));
-                buffer.clear();
+                int read = socketChannel.read(buffer);
+                if (read > 0) {
+                    buffer.flip();
+                    System.out.println("Charset.defaultCharset().decode(buffer) = " + Charset.defaultCharset().decode(buffer));
+                    buffer.clear();
+                }
             }
         }
     }

@@ -14,7 +14,7 @@ import java.nio.charset.Charset;
 public class MyClient {
     public static void main(String[] args) throws IOException {
         SocketChannel channel = SocketChannel.open();
-        channel.connect(new InetSocketAddress(9999));
+        channel.connect(new InetSocketAddress(8888));
         System.out.println("-----------------");
     }
 }
