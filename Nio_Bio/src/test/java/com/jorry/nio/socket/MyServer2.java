@@ -54,15 +54,26 @@ public class MyServer2 {
                     //设置SocketChannel为非阻塞的状态
                     socketChannel.configureBlocking(false);
                     //监控SC状态
-                    SelectionKey sk = socketChannel.register(selector, 0, null);
+                    ByteBuffer buffer = ByteBuffer.allocate(10);
+                    SelectionKey sk = socketChannel.register(selector, 0, buffer);
                     sk.interestOps(SelectionKey.OP_READ);
                     System.out.println("socketChannel = " + socketChannel);
                 } else if (key.isReadable()) {
-                    SocketChannel channel = (SocketChannel) key.channel();
-                    ByteBuffer buffer = ByteBuffer.allocate(20);
-                    channel.read(buffer);
-                    buffer.flip();
-                    System.out.println("Charset.defaultCharset().decode(buffer).toString() = " + Charset.defaultCharset().decode(buffer).toString());
+                    try {
+                        SocketChannel channel = (SocketChannel) key.channel();
+                        //ByteBuffer buffer = ByteBuffer.allocate(20);
+                        //获取绑定的ByteBuffer
+                        ByteBuffer buffer = (ByteBuffer) key.attachment();
+                        int read = channel.read(buffer);
+                        if (read == -1) {
+                            key.cancel();
+                        } else {
+                            buffer.flip();
+                            System.out.println("Charset.defaultCharset().decode(buffer).toString() = " + Charset.defaultCharset().decode(buffer).toString());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
