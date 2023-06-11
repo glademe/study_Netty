@@ -1,4 +1,4 @@
-package com.jorry.nio.socket;
+package com.jorry.nio.reactor;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -14,7 +14,8 @@ import java.nio.charset.Charset;
 public class MyClient {
     public static void main(String[] args) throws IOException {
         SocketChannel channel = SocketChannel.open();
-        channel.connect(new InetSocketAddress(8888));
+        channel.connect(new InetSocketAddress(9999));
+        channel.write(Charset.defaultCharset().encode("xiaohe\n"));
         System.out.println("-----------------");
     }
 }

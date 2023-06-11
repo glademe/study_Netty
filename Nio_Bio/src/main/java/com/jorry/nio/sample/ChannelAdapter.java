@@ -66,23 +66,22 @@ public abstract class ChannelAdapter extends Thread {
                 socketChannel.register(selector, SelectionKey.OP_READ);
                 channelHandler = new ChannelHandler(socketChannel, charset);
                 channelActive(channelHandler);
-            }
-        } else if (key.isReadable()) {
-            SocketChannel socketChannel = (SocketChannel) key.channel();
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
-            int readBytes = socketChannel.write(buffer);
-            if (readBytes > 0) {
-                //转化为读模式
-                buffer.flip();
-                byte[] bytes = new byte[buffer.remaining()];
-                buffer.get(bytes);
-                channelRead(channelHandler, new String(bytes, charset));
-            } else if (readBytes < 0) {
-                key.cancel();
-                socketChannel.close();
+            } else if (key.isReadable()) {
+                SocketChannel socketChannel = (SocketChannel) key.channel();
+                ByteBuffer buffer = ByteBuffer.allocate(1024);
+                int readBytes = socketChannel.write(buffer);
+                if (readBytes > 0) {
+                    //转化为读模式
+                    buffer.flip();
+                    byte[] bytes = new byte[buffer.remaining()];
+                    buffer.get(bytes);
+                    channelRead(channelHandler, new String(bytes, charset));
+                } else if (readBytes < 0) {
+                    key.cancel();
+                    socketChannel.close();
+                }
             }
         }
-
     }
 
     public abstract void channelRead(ChannelHandler ctx, Object msg);
