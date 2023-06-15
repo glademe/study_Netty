@@ -24,6 +24,10 @@ public class NettyServer {
 
     private static final Logger log = LoggerFactory.getLogger(NettyServer.class);
 
+
+    /**
+     * 客户端的多线程指 网络连接和文件的读写
+     */
     public static void main(String[] args) {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
 
@@ -32,6 +36,14 @@ public class NettyServer {
         NioEventLoopGroup worker = new NioEventLoopGroup();
 
         serverBootstrap.group(boss, worker);
+        //服务者是ServerSocketChannel
+        serverBootstrap.handler(new ChannelInitializer<NioServerSocketChannel>() {
+            @Override
+            protected void initChannel(NioServerSocketChannel ch) throws Exception {
+                ChannelPipeline pipeline = ch.pipeline();
+            }
+        });
+        //负责监控SocketChannel
         serverBootstrap.childHandler(new ChannelInitializer<NioSocketChannel>() {
             @Override
             protected void initChannel(NioSocketChannel ch) throws Exception {
