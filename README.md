@@ -388,3 +388,62 @@ public class MyClient {
     }
 }
 ```
+### 3.1、EventLoop
+> 主要作用
+
+```markdown
+1.事件监听，监听Accept,READ,WRITE事件
+2.曾经学到的worker
+    - 1、独立线程
+    - 2、通过死循环 监控状态进行操作
+while(true){
+        selector.select
+        SelectionKeys 遍历
+}
+3.selector
+
+EventLoop     worker 线程 select ---> READ WRITE
+              boss   线程 select ---> Accept
+开发中 如何过的EventLoop
+1. 不会通过构造方法 让程序员创建。
+2. 通过EventLoopGroup创建
+```
+### 3.2、EventLoopGroup
+
+```markdown
+1. 编程的过程中，开放的编程接口 EventLoopGroup
+2. EventLoopGroup 创建EventLoop(一个线程) 多个EventLoop(多个线程)
+                  管理EventLoop
+                  EventLoopGroup EventLoop的工厂
+```
+> NioEventLoop和DefaultEventLoop区别
+
+```markdown
+1. NioEventLoop 是一个线程  IO Write Read 事件监控
+2. DefaultEventLooop 就是一个普通的线程，内容工作可以由程序员决定，他不做 IO监控 读写的处理.
+
+注意：后续再Netty进行多线程开发，推荐大家优先考虑DefaultEventLoop -->普通线程。
+```
+
+
+> 设置协议
+
+```markdown
+1、协议头
+  幻术（魔数）
+2、协议版本号
+3、指令类型
+4、正文长度
+5、序列化方式
+5、协议正文（协议体）消息正文
+```
+
+```json
+{
+  "magicCode": "COFFEEBABY",
+  "versionID": 1,
+  "type": 1,
+  "content-length": 18,
+  "content": "xxxxxxxxxxx"
+}
+```
