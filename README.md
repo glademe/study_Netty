@@ -419,7 +419,7 @@ EventLoop     worker 线程 select ---> READ WRITE
 > NioEventLoop和DefaultEventLoop区别
 
 ```markdown
-1. NioEventLoop 是一个线程  IO Write Read 事件监控
+1. NioEventLoop 是一个线程 IO Write Read 事件监控
 2. DefaultEventLooop 就是一个普通的线程，内容工作可以由程序员决定，他不做 IO监控 读写的处理.
 
 注意：后续再Netty进行多线程开发，推荐大家优先考虑DefaultEventLoop -->普通线程。
@@ -430,7 +430,7 @@ EventLoop     worker 线程 select ---> READ WRITE
 
 ```markdown
 1、协议头
-  幻术（魔数）
+幻术（魔数）
 2、协议版本号
 3、指令类型
 4、正文长度
