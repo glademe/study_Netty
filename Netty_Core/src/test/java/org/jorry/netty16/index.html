@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #message, #receiveMessage {
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <label for="message">消息内容：</label>
+    <textarea id="message"></textarea>
+    <input type="button" value="click" onclick="btnClick()">
+    <label for="receiveMessage">接受到的消息：</label>
+    <textarea id="receiveMessage"></textarea>
+</div>
+
+<script>
+    let socket
+    if (window.WebSocket) {
+        socket = new WebSocket("ws://localhost:9999/api")
+
+        socket.onmessage = function (res) {
+            let receiveMessage = document.getElementById("receiveMessage")
+            receiveMessage.value = receiveMessage.value+"\n"+res.data
+        }
+    }
+
+    function btnClick() {
+        let message = document.getElementById("message")
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.send(message.value)
+        }
+    }
+</script>
+</body>
+</html>
